@@ -1,0 +1,569 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Attendance Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --white: #ffffff;
+            --gray: #6c757d;
+            --bright-blue: #00b4d8;
+            --bright-green: #38b000;
+            --bright-orange: #ff7b00;
+            --bright-purple: #7209b7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #ffffff;
+            color: var(--dark);
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode {
+            background-color: #121212;
+            color: var(--light);
+        }
+
+        header {
+            position: relative;
+            text-align: center;
+            height: 140px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #f8f9fa;
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header p {
+            font-weight: 300;
+            font-size: 1.1rem;
+            margin-top: 15px;
+            max-width: 700px;
+            opacity: 0.9;
+            z-index: 2;
+        }
+
+        .banner-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .circle {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: moveCircles 10s infinite linear;
+        }
+
+        @keyframes moveCircles {
+            0% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-50%) translateX(-50%); }
+            100% { transform: translateY(0) translateX(0); }
+        }
+
+        .circle:nth-child(1) {
+            top: 10%;
+            left: 20%;
+            animation-duration: 8s;
+        }
+
+        .circle:nth-child(2) {
+            top: 50%;
+            left: 70%;
+            animation-duration: 12s;
+        }
+
+        .circle:nth-child(3) {
+            top: 80%;
+            left: 40%;
+            animation-duration: 15s;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .attendance-card {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dark-mode .attendance-card {
+            background: #1e1e1e;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .attendance-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--bright-blue), var(--bright-green));
+            transition: all 0.3s ease;
+        }
+
+        .attendance-card:hover::after {
+            width: 8px;
+        }
+
+        .attendance-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, rgba(114, 9, 183, 0.1), rgba(0, 180, 216, 0.1));
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(114, 9, 183, 0.2);
+        }
+
+        .dark-mode .attendance-status {
+            background: linear-gradient(135deg, rgba(114, 9, 183, 0.2), rgba(0, 180, 216, 0.2));
+            border: 1px solid rgba(114, 9, 183, 0.3);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .status-in {
+            background-color: var(--bright-green);
+        }
+
+        .status-out {
+            background-color: var(--gray);
+        }
+
+        .status-text {
+            font-weight: 500;
+            font-size: 1.0rem;
+        }
+
+        .current-time {
+            font-size: 0.9rem;
+            color: black;
+        }
+
+        .dark-mode .current-time {
+            color: #b0b0b0;
+        }
+
+        .action-card {
+            background: linear-gradient(135deg, rgb(255, 255, 255), rgba(255, 255, 255, 0.1));
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(67, 97, 238, 0.2);
+        }
+
+        .dark-mode .action-card {
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.2), rgba(63, 55, 201, 0.2));
+            border: 1px solid rgba(67, 97, 238, 0.3);
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.1);
+        }
+
+        .action-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--bright-blue);
+        }
+
+        .dark-mode .action-title {
+            color: var(--bright-green);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .dark-mode .form-label {
+            color: var(--light);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode .form-input {
+            background-color: #2d2d2d;
+            border-color: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--bright-blue);
+            box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.2);
+        }
+
+        .form-input[readonly] {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+        }
+
+        .dark-mode .form-input[readonly] {
+            background-color: #2a2a2a;
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, var(--bright-blue), var(--bright-purple));
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 180, 216, 0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 200px;
+            margin-top: 1rem;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 180, 216, 0.4);
+        }
+
+        .action-button:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .action-button i {
+            margin-right: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .attendance-status {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .current-time {
+                margin-top: 0.5rem;
+            }
+
+            .action-button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            header p {
+                font-size: 0.9rem;
+            }
+
+            .attendance-card {
+                padding: 1.5rem 1rem;
+            }
+
+            .action-title {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="banner-background">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+        </div>
+        <h1>Employee Attendance</h1>
+        <p>Track your daily attendance</p>
+    </header>
+    <div class="container">
+        <div class="attendance-card">
+            <div class="attendance-status">
+                <div class="status-indicator">
+                    <div class="status-dot status-out"></div>
+                    <span class="status-text">Punched Out</span>
+                </div>
+                <div class="current-time">--:--:--</div>
+            </div>
+            <div class="action-card">
+                <h3 class="action-title">Attendance</h3>
+                <div class="form-group">
+                    <label class="form-label" for="employeeId">Employee ID</label>
+                    <input type="text" id="employeeId" class="form-input" placeholder="Enter your 7-digit ID (ATS0xxx)" maxlength="7">
+                </div>
+                <button class="action-button" id="punchButton" disabled><i class="fas fa-fingerprint"></i>Punch In</button>
+            </div>
+        </div>
+    </div>
+    <script>
+const employeeIdInput = document.getElementById('employeeId');
+const statusBadge = document.querySelector('.status-indicator');
+const statusText = document.querySelector('.status-text');
+const punchButton = document.getElementById('punchButton');
+const timeDisplay = document.querySelector('.current-time');
+const API_BASE_URL = 'http://http://54.166.206.245:8133/api';
+
+// Validation for Employee ID
+function validateEmployeeId(input) {
+    const employeeIdRegex = /^ATS0(?!000)\d{3}$/;
+    return employeeIdRegex.test(input);
+}
+
+// Update current time display
+function updateTime() {
+    const now = new Date();
+    timeDisplay.textContent = now.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' • ' + now.toLocaleDateString('en-IN');
+}
+
+// Get employee's current status from server
+async function getEmployeeStatus(employeeId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/status/${employeeId}`);
+        if (!response.ok) throw new Error('Failed to fetch status');
+        const data = await response.json();
+        return data.status || 'out';
+    } catch (err) {
+        console.error('Error fetching status:', err);
+        return 'out';
+    }
+}
+
+// Check if employee has completed a punch cycle today
+async function hasCompletedPunchCycleToday(employeeId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/records?employeeId=${employeeId}&date=${new Date().toLocaleDateString('en-CA')}`);
+        if (!response.ok) throw new Error('Failed to fetch records');
+        const records = await response.json();
+
+        if (records.length === 0) return false;
+
+        // Sort records by timestamp in ascending order (oldest to newest)
+        records.sort((a, b) => {
+            const timeA = new Date(`1970-01-01T${a.timestamp}Z`).getTime();
+            const timeB = new Date(`1970-01-01T${b.timestamp}Z`).getTime();
+            return timeA - timeB;
+        });
+
+        // Check for at least one complete in → out cycle
+        let hasPunchIn = false;
+        for (const record of records) {
+            if (record.status === 'in') {
+                hasPunchIn = true;
+            } else if (record.status === 'out' && hasPunchIn) {
+                return true; // Found a complete cycle
+            }
+        }
+        return false;
+    } catch (err) {
+        console.error('Error checking punch cycle:', err);
+        return false;
+    }
+}
+
+// Update UI based on validation and status
+async function updateValidation() {
+    const isIdValid = validateEmployeeId(employeeIdInput.value);
+    if (isIdValid) {
+        const currentStatus = await getEmployeeStatus(employeeIdInput.value);
+        statusBadge.querySelector('.status-dot').className = `status-dot status-${currentStatus}`;
+        statusText.textContent = `Punched ${currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1)}`;
+        punchButton.innerHTML = `<i class="fas fa-fingerprint"></i> Punch ${currentStatus === 'in' ? 'Out' : 'In'}`;
+        const hasPunchedToday = await hasCompletedPunchCycleToday(employeeIdInput.value);
+        punchButton.disabled = hasPunchedToday && currentStatus === 'out';
+        if (hasPunchedToday && currentStatus === 'out') {
+            statusText.textContent = 'Cycle Complete';
+        }
+    } else {
+        punchButton.disabled = true;
+        statusBadge.querySelector('.status-dot').className = 'status-dot status-out';
+        statusText.textContent = 'Punched Out';
+        punchButton.innerHTML = '<i class="fas fa-fingerprint"></i> Punch In';
+    }
+}
+
+// Handle punch in/out
+async function toggleStatus() {
+    const employeeId = employeeIdInput.value;
+    if (!validateEmployeeId(employeeId)) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/punch`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ employeeId })
+        });
+
+        if (!response.ok) throw new Error('Failed to punch');
+        
+        const data = await response.json();
+        
+        statusBadge.querySelector('.status-dot').className = `status-dot status-${data.status}`;
+        statusText.textContent = `Punched ${data.status.charAt(0).toUpperCase() + data.status.slice(1)}`;
+        punchButton.innerHTML = `<i class="fas fa-fingerprint"></i> Punch ${data.status === 'in' ? 'Out' : 'In'}`;
+        employeeIdInput.disabled = data.status === 'in';
+        
+        // After punching, immediately recheck cycle status
+        const hasPunchedToday = await hasCompletedPunchCycleToday(employeeId);
+        if (data.status === 'out' && hasPunchedToday) {
+            punchButton.disabled = true;
+            statusText.textContent = 'Cycle Complete';
+        }
+    } catch (err) {
+        console.error('Error punching:', err);
+        alert('Failed to process punch. Please try again.');
+    }
+}
+
+// Restrict input to enforce "ATS0" prefix and digits for the last 3 characters
+employeeIdInput.addEventListener('input', function() {
+    let inputValue = employeeIdInput.value;
+    
+    // Remove spaces and non-alphanumeric characters, then convert to uppercase
+    inputValue = inputValue.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+
+    // Enforce "ATS0" as the first 4 characters
+    if (inputValue.length < 4) {
+        inputValue = "ATS0".slice(0, inputValue.length) + inputValue.slice(inputValue.length);
+    } else {
+        inputValue = "ATS0" + inputValue.slice(4);
+    }
+
+    // If length is more than 4, ensure the last 3 characters are digits
+    if (inputValue.length > 4) {
+        let prefix = inputValue.slice(0, 4); // Should be "ATS0"
+        let suffix = inputValue.slice(4); // The remaining characters
+        // Keep only digits in the suffix
+        suffix = suffix.replace(/[^0-9]/g, '');
+        // Limit suffix to 3 characters
+        if (suffix.length > 3) {
+            suffix = suffix.slice(0, 3);
+        }
+        inputValue = prefix + suffix;
+    }
+
+    // Limit total length to 7 characters
+    if (inputValue.length > 7) {
+        inputValue = inputValue.slice(0, 7);
+    }
+
+    employeeIdInput.value = inputValue;
+    updateValidation();
+});
+
+// Handle punch button click
+punchButton.addEventListener('click', toggleStatus);
+
+
+window.addEventListener('load', async () => {
+    updateTime();
+    setInterval(updateTime, 1000);
+    if (employeeIdInput.value) {
+        const currentStatus = await getEmployeeStatus(employeeIdInput.value);
+        statusBadge.querySelector('.status-dot').className = `status-dot status-${currentStatus}`;
+        statusText.textContent = `Punched ${currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1)}`;
+        punchButton.innerHTML = `<i class="fas fa-fingerprint"></i> Punch ${currentStatus === 'in' ? 'Out' : 'In'}`;
+        employeeIdInput.disabled = currentStatus === 'in';
+        const hasPunchedToday = await hasCompletedPunchCycleToday(employeeIdInput.value);
+        if (hasPunchedToday && currentStatus === 'out') {
+            punchButton.disabled = true;
+            statusText.textContent = 'Cycle Complete';
+        }
+    }
+});
+    </script>
+</body>
+</html>
