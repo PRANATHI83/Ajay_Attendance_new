@@ -2,13 +2,13 @@ const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
 const app = express();
-const port = 3019;
+const port = 3009;
 
 const pool = new Pool({
     user: 'postgres',
     host: 'postgres',
     database: 'new_employee_attendance',
-    password: 'admin123',
+    password: 'admin234',
     port: 5432,
 });
 
@@ -187,5 +187,5 @@ app.delete('/api/records', async (req, res) => {
 
 // Start server
 app.listen(port, () => {
-    console.log(`Server running at http://54.166.206.245:${port}`);
+    console.log(`Server running at http://13.201.63.96:${port}`);
 });
