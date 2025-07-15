@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: ajay_attendance_postgres
+    ports:
+      - "5441:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin234
+      POSTGRES_DB: new_employee_attendance
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - ajay_network
+
+  backend:
+    build: ./Backend
+    container_name: ajay_attendance_backend
+    ports:
+      - "3009:3009"
+    depends_on:
+      - postgres
+    networks:
+      - ajay_network
+
+  frontend:
+    build: ./Frontend
+    container_name: ajay_attendance_frontend
+    ports:
+      - "8020:80"
+    depends_on:
+      - backend
+    networks:
+      - ajay_network
+
+  hr_page:
+    build: ./Hr_Page
+    container_name: ajay_attendance_hr
+    ports:
+      - "8021:80"
+    depends_on:
+      - backend
+    networks:
+      - ajay_network
+
+volumes:
+  postgres_data:
+
+networks:
+  ajay_network:
+
